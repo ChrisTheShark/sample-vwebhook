@@ -7,11 +7,14 @@ import (
 	"net/http"
 
 	"k8s.io/api/admission/v1beta1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	requiredLabel = "team"
-	port          = ":8443"
+	// InvalidMessage will be return to the user.
+	InvalidMessage = "namespace missing required team label"
+	requiredLabel  = "team"
+	port           = ":8443"
 )
 
 var (
@@ -35,8 +38,6 @@ func (m Metadata) isEmpty() bool {
 
 // Validate handler accepts or rejects based on request contents
 func Validate(w http.ResponseWriter, r *http.Request) {
-	allow := true
-
 	arRequest := v1beta1.AdmissionReview{}
 	if err := json.NewDecoder(r.Body).Decode(&arRequest); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,12 +58,15 @@ func Validate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(ns.Metadata.Labels) == 0 || ns.Metadata.Labels[requiredLabel] == "" {
-		allow = false
+	arRequest.Response = &v1beta1.AdmissionResponse{
+		Allowed: true,
 	}
 
-	arRequest.Response = &v1beta1.AdmissionResponse{
-		Allowed: allow,
+	if len(ns.Metadata.Labels) == 0 || ns.Metadata.Labels[requiredLabel] == "" {
+		arRequest.Response.Allowed = false
+		arRequest.Response.Result = &metav1.Status{
+			Message: InvalidMessage,
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

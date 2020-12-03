@@ -106,6 +106,7 @@ func TestMissingRequiredLabel(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, false, rcvdAdmReview.Response.Allowed)
+	assert.Equal(t, InvalidMessage, rcvdAdmReview.Response.Result.Message)
 }
 
 func TestMissingRequiredLabel2(t *testing.T) {
@@ -137,4 +138,5 @@ func TestMissingRequiredLabel2(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, false, rcvdAdmReview.Response.Allowed)
+	assert.Equal(t, InvalidMessage, rcvdAdmReview.Response.Result.Message)
 }

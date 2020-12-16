@@ -1,0 +1,15 @@
+replicaCount: 1
+namespace: webhooks
+
+image:
+  repository: chrisdyer/simple-vwebhook
+  pullPolicy: Always
+  tag: v1.0.0
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

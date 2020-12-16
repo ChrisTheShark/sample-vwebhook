@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "nsvalidator.webhooks.svc.cluster.local"
+webhooks:
+  - name: "nsvalidator.webhooks.svc.cluster.local"
+    rules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["namespaces"]
+        scope: "Cluster"
+    clientConfig:
+      service:
+        namespace: "webhooks"
+        name: "nsvalidator"
+        path: "/validate"
+      caBundle: "CA_BUNDLE"
+    admissionReviewVersions: ["v1", "v1beta1"]
+    sideEffects: None
+    timeoutSeconds: 5

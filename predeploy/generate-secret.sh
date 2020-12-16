@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 usage() {
-    echo 'Usage: generate-cert.sh <serviceName> <namespace> <secretName>'
+    echo 'Usage: generate-secret.sh <serviceName> <namespace> <secretName>'
 }
 
 if [ "$#" -ne 3 ]; then

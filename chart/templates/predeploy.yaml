@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ required "A valid .Values.namespace is required!" .Values.namespace }}
+  labels:
+    {{- include "nsvalidator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": "hook-succeeded"
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: chrisdyer/simple-vwebhook-predeploy:v1.0.0
+          imagePullPolicy: Always
+          args: ["{{ include "nsvalidator.fullname" . }}", "webhooks", "tlssecret"]
+      serviceAccountName: {{ .Chart.Name }}-sa
+      restartPolicy: Never
+  backoffLimit: 4
